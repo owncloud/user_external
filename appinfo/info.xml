@@ -14,7 +14,7 @@
 	<dependencies>
 		<owncloud min-version="10" max-version="10" />
 	</dependencies>
-	<version>0.4.1</version>
+	<version>0.5.0</version>
 	<shipped>true</shipped>
 	<types>
 		<authentication/>
