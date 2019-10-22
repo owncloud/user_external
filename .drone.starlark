@@ -15,7 +15,25 @@ config = {
 
 	'phan': True,
 
-	'phpunit': False,
+	'phpunit': {
+		'allDatabases' : {
+			'phpVersions': [
+				'7.0',
+			]
+		},
+		'reducedDatabases' : {
+			'phpVersions': [
+				'7.1',
+				'7.2',
+				'7.3',
+			],
+			'databases': [
+				'sqlite',
+				'mariadb:10.2',
+			],
+			'coverage': False
+		},
+	},
 
 	'acceptance': False
 }
