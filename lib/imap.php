@@ -37,7 +37,7 @@ class OC_User_IMAP extends \OCA\user_external\Base {
 	 * @param string $uid      The username
 	 * @param string $password The password
 	 *
-	 * @return true/false
+	 * @return string|bool
 	 */
 	public function checkPassword($uid, $password) {
 		if (!\function_exists('imap_open')) {

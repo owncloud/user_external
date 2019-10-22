@@ -34,7 +34,7 @@ class OC_User_SMB extends \OCA\user_external\Base {
 	/**
 	 * @param string $uid
 	 * @param string $password
-	 * @return bool
+	 * @return string|bool
 	 */
 	private function tryAuthentication($uid, $password) {
 		$uidEscaped = \escapeshellarg($uid);
@@ -72,7 +72,7 @@ class OC_User_SMB extends \OCA\user_external\Base {
 	 * @param string $uid      The username
 	 * @param string $password The password
 	 *
-	 * @return true/false
+	 * @return string|bool
 	 */
 	public function checkPassword($uid, $password) {
 		// Check with an invalid password, if the user authenticates then fail

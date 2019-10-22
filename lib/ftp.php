@@ -42,7 +42,7 @@ class OC_User_FTP extends \OCA\user_external\Base {
 	 * @param string $uid      The username
 	 * @param string $password The password
 	 *
-	 * @return true/false
+	 * @return string|bool
 	 */
 	public function checkPassword($uid, $password) {
 		if (\array_search($this->protocol, \stream_get_wrappers()) === false) {

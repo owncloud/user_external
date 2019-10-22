@@ -130,7 +130,7 @@ abstract class Base extends \OC_User_Backend {
 	 * @param string $uid         The username
 	 * @param string $displayName The new display name
 	 *
-	 * @return true/false
+	 * @return bool
 	 */
 	public function setDisplayName($uid, $displayName) {
 		if (!$this->userExists($uid)) {
