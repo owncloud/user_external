@@ -6,19 +6,17 @@
 	<licence>AGPL</licence>
 	<author>Robin Appelman</author>
 	<documentation>
-            <admin>https://doc.owncloud.org/server/9.0/admin_manual/configuration_user/user_auth_ftp_smb_imap.html</admin>
-        </documentation>
+		<admin>https://doc.owncloud.org/server/10.3/admin_manual/configuration/user/user_auth_ftp_smb_imap.html</admin>
+	</documentation>
 	<website>https://github.com/owncloud/apps/tree/master/user_external</website>
 	<bugs>https://github.com/owncloud/apps/issues</bugs>
-	<repository type="git">https://github.com/owncloud/apps.git</repository>
+	<repository type="git">https://github.com/owncloud/user_external.git</repository>
 	<dependencies>
 		<owncloud min-version="10" max-version="10" />
 	</dependencies>
 	<version>0.5.0</version>
-	<shipped>true</shipped>
 	<types>
 		<authentication/>
 		<prelogin/>
 	</types>
-	<ocsid>166060</ocsid>
 </info>

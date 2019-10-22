@@ -6,6 +6,9 @@
  * See the COPYING-README file.
  */
 
+/**
+ * @group DB
+ */
 class Test_User_SMB extends \Test\TestCase {
 	/**
 	 * @var OC_User_IMAP $instance
