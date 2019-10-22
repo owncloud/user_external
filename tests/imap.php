@@ -16,7 +16,7 @@ class Test_User_Imap extends \Test\TestCase {
 		return include(__DIR__.'/config.php');
 	}
 
-	function skip() {
+	public function skip() {
 		$config=$this->getConfig();
 		$this->skipUnless($config['imap']['run']);
 	}
@@ -28,9 +28,9 @@ class Test_User_Imap extends \Test\TestCase {
 		$this->instance=new OC_User_IMAP($config['imap']['mailbox']);
 	}
 
-	function testLogin() {
+	public function testLogin() {
 		$config=$this->getConfig();
-		$this->assertEquals($config['imap']['user'],$this->instance->checkPassword($config['imap']['user'],$config['imap']['password']));
-		$this->assertFalse($this->instance->checkPassword($config['imap']['user'],$config['imap']['password'].'foo'));
+		$this->assertEquals($config['imap']['user'], $this->instance->checkPassword($config['imap']['user'], $config['imap']['password']));
+		$this->assertFalse($this->instance->checkPassword($config['imap']['user'], $config['imap']['password'].'foo'));
 	}
 }
