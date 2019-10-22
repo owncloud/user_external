@@ -16,7 +16,7 @@ class Test_User_SMB extends \Test\TestCase {
 		return include(__DIR__.'/config.php');
 	}
 
-	function skip() {
+	public function skip() {
 		$config=$this->getConfig();
 		$this->skipUnless($config['smb']['run']);
 	}
@@ -28,9 +28,9 @@ class Test_User_SMB extends \Test\TestCase {
 		$this->instance=new OC_User_SMB($config['smb']['host']);
 	}
 
-	function testLogin() {
+	public function testLogin() {
 		$config=$this->getConfig();
-		$this->assertEquals($config['smb']['user'],$this->instance->checkPassword($config['smb']['user'],$config['smb']['password']));
-		$this->assertFalse($this->instance->checkPassword($config['smb']['user'],$config['smb']['password'].'foo'));
+		$this->assertEquals($config['smb']['user'], $this->instance->checkPassword($config['smb']['user'], $config['smb']['password']));
+		$this->assertFalse($this->instance->checkPassword($config['smb']['user'], $config['smb']['password'].'foo'));
 	}
 }

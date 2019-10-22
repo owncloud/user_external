@@ -15,7 +15,7 @@
  * @license  http://www.gnu.org/licenses/agpl AGPL
  * @link     http://github.com/owncloud/apps
  */
-class OC_User_SMB extends \OCA\user_external\Base{
+class OC_User_SMB extends \OCA\user_external\Base {
 	private $host;
 
 	const SMBCLIENT = 'smbclient -L';
@@ -34,29 +34,29 @@ class OC_User_SMB extends \OCA\user_external\Base{
 	/**
 	 * @param string $uid
 	 * @param string $password
-	 * @return bool
+	 * @return string|bool
 	 */
 	private function tryAuthentication($uid, $password) {
-		$uidEscaped = escapeshellarg($uid);
-		$password = escapeshellarg($password);
-		$command = self::SMBCLIENT.' '.escapeshellarg('//' . $this->host . '/dummy').' -U'.$uidEscaped.'%'.$password;
-		$lastline = exec($command, $output, $retval);
+		$uidEscaped = \escapeshellarg($uid);
+		$password = \escapeshellarg($password);
+		$command = self::SMBCLIENT.' '.\escapeshellarg('//' . $this->host . '/dummy').' -U'.$uidEscaped.'%'.$password;
+		$lastline = \exec($command, $output, $retval);
 		if ($retval === 127) {
 			OCP\Util::writeLog(
 				'user_external', 'ERROR: smbclient executable missing',
 				OCP\Util::ERROR
 			);
 			return false;
-		} else if (strpos($lastline, self::LOGINERROR) !== false) {
+		} elseif (\strpos($lastline, self::LOGINERROR) !== false) {
 			//normal login error
 			return false;
-		} else if (strpos($lastline, 'NT_STATUS_BAD_NETWORK_NAME') !== false) {
+		} elseif (\strpos($lastline, 'NT_STATUS_BAD_NETWORK_NAME') !== false) {
 			//login on minor error
 			goto login;
-		} else if ($retval != 0) {
+		} elseif ($retval != 0) {
 			//some other error
 			OCP\Util::writeLog(
-				'user_external', 'ERROR: smbclient error: ' . trim($lastline),
+				'user_external', 'ERROR: smbclient error: ' . \trim($lastline),
 				OCP\Util::ERROR
 			);
 			return false;
@@ -72,18 +72,18 @@ class OC_User_SMB extends \OCA\user_external\Base{
 	 * @param string $uid      The username
 	 * @param string $password The password
 	 *
-	 * @return true/false
+	 * @return string|bool
 	 */
 	public function checkPassword($uid, $password) {
 		// Check with an invalid password, if the user authenticates then fail
-		$attemptWithInvalidPassword = $this->tryAuthentication($uid, base64_encode($password));
-		if(is_string($attemptWithInvalidPassword)) {
+		$attemptWithInvalidPassword = $this->tryAuthentication($uid, \base64_encode($password));
+		if (\is_string($attemptWithInvalidPassword)) {
 			return false;
 		}
 
 		// Check with valid password
 		$attemptWithValidPassword = $this->tryAuthentication($uid, $password);
-		if(is_string($attemptWithValidPassword)) {
+		if (\is_string($attemptWithValidPassword)) {
 			$this->storeUser($uid);
 			return $uid;
 		}
@@ -91,4 +91,3 @@ class OC_User_SMB extends \OCA\user_external\Base{
 		return false;
 	}
 }
-

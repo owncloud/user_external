@@ -16,7 +16,7 @@ class Test_User_FTP extends \Test\TestCase {
 		return include(__DIR__.'/config.php');
 	}
 
-	function skip() {
+	public function skip() {
 		$config=$this->getConfig();
 		$this->skipUnless($config['ftp']['run']);
 	}
@@ -27,9 +27,9 @@ class Test_User_FTP extends \Test\TestCase {
 		$this->instance=new OC_User_FTP($config['ftp']['host']);
 	}
 
-	function testLogin() {
+	public function testLogin() {
 		$config=$this->getConfig();
-		$this->assertEquals($config['ftp']['user'],$this->instance->checkPassword($config['ftp']['user'],$config['ftp']['password']));
-		$this->assertFalse($this->instance->checkPassword($config['ftp']['user'],$config['ftp']['password'].'foo'));
+		$this->assertEquals($config['ftp']['user'], $this->instance->checkPassword($config['ftp']['user'], $config['ftp']['password']));
+		$this->assertFalse($this->instance->checkPassword($config['ftp']['user'], $config['ftp']['password'].'foo'));
 	}
 }

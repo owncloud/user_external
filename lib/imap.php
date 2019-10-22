@@ -37,38 +37,38 @@ class OC_User_IMAP extends \OCA\user_external\Base {
 	 * @param string $uid      The username
 	 * @param string $password The password
 	 *
-	 * @return true/false
+	 * @return string|bool
 	 */
 	public function checkPassword($uid, $password) {
-		if (!function_exists('imap_open')) {
+		if (!\function_exists('imap_open')) {
 			OCP\Util::writeLog('user_external', 'ERROR: PHP imap extension is not installed', OCP\Util::ERROR);
 			return false;
 		}
 
-		// Check if we only want logins from ONE domain and strip the domain part from UID		
-		if($this->domain != '') {
-			$pieces = explode('@', $uid);
-			if(count($pieces) == 1) {
+		// Check if we only want logins from ONE domain and strip the domain part from UID
+		if ($this->domain != '') {
+			$pieces = \explode('@', $uid);
+			if (\count($pieces) == 1) {
 				$username = $uid . "@" . $this->domain;
-			}elseif((count($pieces) == 2) and ($pieces[1] == $this->domain)) {
+			} elseif ((\count($pieces) == 2) and ($pieces[1] == $this->domain)) {
 				$username = $uid;
 				$uid = $pieces[0];
-			}else{
+			} else {
 				return false;
 			}
-		}else{
+		} else {
 			$username = $uid;
 		}
 
-		$mbox = @imap_open($this->mailbox, $username, $password, OP_HALFOPEN, 1);
-		imap_errors();
-		imap_alerts();
-		if($mbox !== FALSE) {
-			imap_close($mbox);
-			$uid = mb_strtolower($uid);
+		$mbox = @\imap_open($this->mailbox, $username, $password, OP_HALFOPEN, 1);
+		\imap_errors();
+		\imap_alerts();
+		if ($mbox !== false) {
+			\imap_close($mbox);
+			$uid = \mb_strtolower($uid);
 			$this->storeUser($uid);
 			return $uid;
-		}else{
+		} else {
 			return false;
 		}
 	}

@@ -9,7 +9,6 @@
 namespace OCA\user_external;
 
 class WebDavAuth extends Base {
-
 	private $webDavAuthUrl;
 
 	public function __construct($webDavAuthUrl) {
@@ -23,25 +22,24 @@ class WebDavAuth extends Base {
 	 * @param string $uid      The username
 	 * @param string $password The password
 	 *
-	 * @return true/false
+	 * @return string|bool
 	 */
 	public function checkPassword($uid, $password) {
-		$arr = explode('://', $this->webDavAuthUrl, 2);
-		if( ! isset($arr) OR count($arr) !== 2) {
+		$arr = \explode('://', $this->webDavAuthUrl, 2);
+		if (! isset($arr) or \count($arr) !== 2) {
 			\OCP\Util::writeLog('OC_USER_WEBDAVAUTH', 'Invalid Url: "'.$this->webDavAuthUrl.'" ', 3);
 			return false;
 		}
 		list($protocol, $path) = $arr;
-		$url= $protocol.'://'.urlencode($uid).':'.urlencode($password).'@'.$path;
-		$headers = get_headers($url);
-		if($headers==false) {
+		$url= $protocol.'://'.\urlencode($uid).':'.\urlencode($password).'@'.$path;
+		$headers = \get_headers($url);
+		if ($headers==false) {
 			\OCP\Util::writeLog('OC_USER_WEBDAVAUTH', 'Not possible to connect to WebDAV Url: "'.$protocol.'://'.$path.'" ', 3);
 			return false;
-
 		}
-		$returnCode= substr($headers[0], 9, 3);
+		$returnCode= \substr($headers[0], 9, 3);
 
-		if(substr($returnCode, 0, 1) === '2') {
+		if (\substr($returnCode, 0, 1) === '2') {
 			$this->storeUser($uid);
 			return $uid;
 		} else {
