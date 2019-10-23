@@ -26,7 +26,7 @@ class WebDavAuth extends Base {
 	 */
 	public function checkPassword($uid, $password) {
 		$arr = \explode('://', $this->webDavAuthUrl, 2);
-		if (! isset($arr) or \count($arr) !== 2) {
+		if (\count($arr) !== 2) {
 			\OCP\Util::writeLog('OC_USER_WEBDAVAUTH', 'Invalid Url: "'.$this->webDavAuthUrl.'" ', 3);
 			return false;
 		}
