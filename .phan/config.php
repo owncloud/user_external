@@ -21,6 +21,8 @@
  *
  */
 
+use Phan\Issue;
+
 return [
 
 	// Supported values: '7.0', '7.1', '7.2', null.
@@ -99,7 +101,7 @@ return [
 	// Issue::SEVERITY_CRITICAL. Setting it to only
 	// critical issues is a good place to start on a big
 	// sloppy mature code base.
-	'minimum_severity' => 5,
+	'minimum_severity' => Issue::SEVERITY_LOW,
 
 	// A set of fully qualified class-names for which
 	// a call to parent::__construct() is required
