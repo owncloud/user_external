@@ -1,7 +1,7 @@
 ---
 kind: pipeline
 type: docker
-name: coding-standard-php7.0
+name: coding-standard-php7.1
 
 platform:
   os: linux
@@ -14,7 +14,7 @@ workspace:
 steps:
 - name: coding-standard
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - make test-php-style
 
@@ -68,45 +68,6 @@ steps:
   image: owncloudci/php:7.2
   commands:
   - make test-php-phpstan
-
-trigger:
-  ref:
-  - refs/pull/**
-  - refs/tags/**
-  - refs/heads/master
-
----
-kind: pipeline
-type: docker
-name: phan-php7.0
-
-platform:
-  os: linux
-  arch: amd64
-
-workspace:
-  base: /var/www/owncloud
-  path: server/apps/user_external
-
-steps:
-- name: install-core
-  pull: always
-  image: owncloudci/core
-  settings:
-    core_path: /var/www/owncloud/server
-    db_host: sqlite
-    db_name: owncloud
-    db_password: owncloud
-    db_type: sqlite
-    db_username: owncloud
-    exclude: apps/user_external
-    version: daily-master-qa
-
-- name: phan
-  pull: always
-  image: owncloudci/php:7.0
-  commands:
-  - make test-php-phan
 
 trigger:
   ref:
