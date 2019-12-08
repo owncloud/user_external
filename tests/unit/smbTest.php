@@ -24,7 +24,7 @@ class Test_User_SMB extends \Test\TestCase {
 		$this->skipUnless($config['smb']['run']);
 	}
 
-	protected function setUp() {
+	protected function setUp(): void {
 		parent::setUp();
 
 		$config=$this->getConfig();

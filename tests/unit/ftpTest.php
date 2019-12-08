@@ -21,7 +21,7 @@ class Test_User_FTP extends \Test\TestCase {
 		$this->skipUnless($config['ftp']['run']);
 	}
 
-	protected function setUp() {
+	protected function setUp(): void {
 		parent::setUp();
 		$config=$this->getConfig();
 		$this->instance=new OC_User_FTP($config['ftp']['host']);
