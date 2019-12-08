@@ -21,7 +21,7 @@ class Test_User_Imap extends \Test\TestCase {
 		$this->skipUnless($config['imap']['run']);
 	}
 
-	protected function setUp() {
+	protected function setUp(): void {
 		parent::setUp();
 
 		$config=$this->getConfig();
