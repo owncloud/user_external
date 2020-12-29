@@ -52,7 +52,7 @@ class OC_User_SMB extends \OCA\user_external\Base {
 			return false;
 		} elseif (\strpos($lastline, 'NT_STATUS_BAD_NETWORK_NAME') !== false) {
 			//login on minor error
-			goto login;
+			return $uid;
 		} elseif ($retval != 0) {
 			//some other error
 			OCP\Util::writeLog(
@@ -61,7 +61,6 @@ class OC_User_SMB extends \OCA\user_external\Base {
 			);
 			return false;
 		} else {
-			login:
 			return $uid;
 		}
 	}
