@@ -21,6 +21,7 @@ config = {
 }
 
 def main(ctx):
+	
 	before = beforePipelines()
 
 	coverageTests = coveragePipelines(ctx)
@@ -29,6 +30,13 @@ def main(ctx):
 		return []
 
 	dependsOn(before, coverageTests)
+
+	nonCoverageTests = nonCoveragePipelines(ctx)
+	if (nonCoverageTests == False):
+		print('Errors detected in nonCoveragePipelines. Review messages above.')
+		return []
+
+	dependsOn(before, nonCoverageTests)
 
 	stages = stagePipelines(ctx)
 	if (stages == False):
@@ -44,18 +52,28 @@ def main(ctx):
 		dependsOn(coverageTests, afterCoverageTests)
 
 	after = afterPipelines(ctx)
-	dependsOn(afterCoverageTests + stages, after)
+	dependsOn(afterCoverageTests + nonCoverageTests + stages, after)
 
-	return before + coverageTests + afterCoverageTests + stages + after
+	return before + coverageTests + afterCoverageTests + nonCoverageTests + stages + after
 
 def beforePipelines():
 	return codestyle() + jscodestyle() + phpstan() + phan()
 
 def coveragePipelines(ctx):
-	# All pipelines that might have coverage or other test analysis reported
-	jsPipelines = javascript(ctx)
-	phpUnitPipelines = phpTests(ctx, 'phpunit')
-	phpIntegrationPipelines = phpTests(ctx, 'phpintegration')
+	# All unit test pipelines that have coverage or other test analysis reported
+	jsPipelines = javascript(ctx, True)
+	phpUnitPipelines = phpTests(ctx, 'phpunit', True)
+	phpIntegrationPipelines = phpTests(ctx, 'phpintegration', True)
+	if (jsPipelines == False) or (phpUnitPipelines == False) or (phpIntegrationPipelines == False):
+		return False
+
+	return jsPipelines + phpUnitPipelines + phpIntegrationPipelines
+
+def nonCoveragePipelines(ctx):
+	# All unit test pipelines that do not have coverage or other test analysis reported
+	jsPipelines = javascript(ctx, False)
+	phpUnitPipelines = phpTests(ctx, 'phpunit', False)
+	phpIntegrationPipelines = phpTests(ctx, 'phpintegration', False)
 	if (jsPipelines == False) or (phpUnitPipelines == False) or (phpIntegrationPipelines == False):
 		return False
 
@@ -431,7 +449,7 @@ def build():
 
 	return pipelines
 
-def javascript(ctx):
+def javascript(ctx, withCoverage):
 	pipelines = []
 
 	if 'javascript' not in config:
@@ -445,6 +463,7 @@ def javascript(ctx):
 		'extraEnvironment': {},
 		'extraCommandsBeforeTestRun': [],
 		'extraTeardown': [],
+		'skip': False
 	}
 
 	if 'defaults' in config:
@@ -464,6 +483,17 @@ def javascript(ctx):
 	params = {}
 	for item in default:
 		params[item] = matrix[item] if item in matrix else default[item]
+
+	if params['skip']:
+		return pipelines
+
+	# if we only want pipelines with coverage, and this pipeline does not do coverage, then do not include it
+	if withCoverage and not params['coverage']:
+		return pipelines
+
+	# if we only want pipelines without coverage, and this pipeline does coverage, then do not include it
+	if not withCoverage and params['coverage']:
+		return pipelines
 
 	result = {
 		'kind': 'pipeline',
@@ -527,7 +557,7 @@ def javascript(ctx):
 
 	return [result]
 
-def phpTests(ctx, testType):
+def phpTests(ctx, testType, withCoverage):
 	pipelines = []
 
 	if testType not in config:
@@ -551,6 +581,7 @@ def phpTests(ctx, testType):
 		'extraCommandsBeforeTestRun': [],
 		'extraApps': {},
 		'extraTeardown': [],
+		'skip': False
 	}
 
 	if 'defaults' in config:
@@ -575,6 +606,17 @@ def phpTests(ctx, testType):
 		params = {}
 		for item in default:
 			params[item] = matrix[item] if item in matrix else default[item]
+
+		if params['skip']:
+			continue
+
+		# if we only want pipelines with coverage, and this pipeline does not do coverage, then do not include it
+		if withCoverage and not params['coverage']:
+			continue
+
+		# if we only want pipelines without coverage, and this pipeline does coverage, then do not include it
+		if not withCoverage and params['coverage']:
+			continue
 
 		cephS3Params = params['cephS3']
 		if type(cephS3Params) == "bool":
@@ -745,6 +787,9 @@ def acceptance(ctx):
 		'numberOfParts': 1,
 		'cron': '',
 		'pullRequestAndCron': 'nightly',
+		'skip': False,
+		'debugSuites': [],
+		'skipExceptParts': []
 	}
 
 	if 'defaults' in config:
@@ -760,6 +805,14 @@ def acceptance(ctx):
 		else:
 			suites = matrix['suites']
 
+		if 'debugSuites' in matrix and len(matrix['debugSuites']) != 0:
+			if type(matrix['debugSuites']) == "list":
+				suites = {}
+				for suite in matrix['debugSuites']:
+					suites[suite] = suite
+			else:
+				suites = matrix['debugSuites']
+
 		for suite, alternateSuiteName in suites.items():
 			isWebUI = suite.startswith('webUI')
 			isAPI = suite.startswith('api')
@@ -768,6 +821,9 @@ def acceptance(ctx):
 			params = {}
 			for item in default:
 				params[item] = matrix[item] if item in matrix else default[item]
+
+			if params['skip']:
+				continue
 
 			if isAPI or isCLI:
 				params['browsers'] = ['']
@@ -798,6 +854,10 @@ def acceptance(ctx):
 				params['extraApps'] = extraAppsDict
 
 			for testConfig in buildTestConfig(params):
+				debugPartsEnabled = (len(testConfig['skipExceptParts']) != 0)
+				if debugPartsEnabled and testConfig['runPart'] not in testConfig['skipExceptParts']:
+					continue
+
 				name = 'unknown'
 				if isWebUI or isAPI or isCLI:
 					esString = '-es' + testConfig['esVersion'] if testConfig['esVersion'] != 'none' else ''
@@ -1141,7 +1201,6 @@ def ldapService(ldapNeeded):
 				'LDAP_ORGANISATION': 'owncloud',
 				'LDAP_ADMIN_PASSWORD': 'admin',
 				'LDAP_TLS_VERIFY_CLIENT': 'never',
-				'HOSTNAME': 'ldap',
 			}
 		}]
 
@@ -1211,11 +1270,13 @@ def owncloudService(version, phpVersion, name = 'server', path = '/var/www/owncl
 			'APACHE_CONFIG_TEMPLATE': 'ssl',
 			'APACHE_SSL_CERT_CN': 'server',
 			'APACHE_SSL_CERT': '/var/www/owncloud/%s.crt' % name,
-			'APACHE_SSL_KEY': '/var/www/owncloud/%s.key' % name
+			'APACHE_SSL_KEY': '/var/www/owncloud/%s.key' % name,
+			'APACHE_LOGGING_PATH': '/dev/null',
 		}
 	else:
 		environment = {
-			'APACHE_WEBROOT': path
+			'APACHE_WEBROOT': path,
+			'APACHE_LOGGING_PATH': '/dev/null',
 		}
 
 	return [{
