@@ -18,8 +18,8 @@
 class OC_User_SMB extends \OCA\user_external\Base {
 	private $host;
 
-	const SMBCLIENT = 'smbclient -L';
-	const LOGINERROR = 'NT_STATUS_LOGON_FAILURE';
+	public const SMBCLIENT = 'smbclient -L';
+	public const LOGINERROR = 'NT_STATUS_LOGON_FAILURE';
 
 	/**
 	 * Create new samba authentication provider
@@ -43,7 +43,8 @@ class OC_User_SMB extends \OCA\user_external\Base {
 		$lastline = \exec($command, $output, $retval);
 		if ($retval === 127) {
 			OCP\Util::writeLog(
-				'user_external', 'ERROR: smbclient executable missing',
+				'user_external',
+				'ERROR: smbclient executable missing',
 				OCP\Util::ERROR
 			);
 			return false;
@@ -56,7 +57,8 @@ class OC_User_SMB extends \OCA\user_external\Base {
 		} elseif ($retval != 0) {
 			//some other error
 			OCP\Util::writeLog(
-				'user_external', 'ERROR: smbclient error: ' . \trim($lastline),
+				'user_external',
+				'ERROR: smbclient error: ' . \trim($lastline),
 				OCP\Util::ERROR
 			);
 			return false;
