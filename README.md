@@ -131,4 +131,3 @@ Add the following to your `config.php`:
             'arguments' => array('https://example.com/webdav'),
         ),
     ),
-
