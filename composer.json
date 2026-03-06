@@ -10,6 +10,9 @@
   },
   "require": {
   },
+  "suggest": {
+    "ext-imap": "*"
+  },
   "require-dev": {
     "bamarni/composer-bin-plugin": "^1.8"
   },
