@@ -12,9 +12,9 @@
 	<bugs>https://github.com/owncloud/apps/issues</bugs>
 	<repository type="git">https://github.com/owncloud/user_external.git</repository>
 	<dependencies>
-		<owncloud min-version="10" max-version="10" />
+		<owncloud min-version="11" max-version="11" />
 	</dependencies>
-	<version>0.6.0</version>
+	<version>0.7.0</version>
 	<types>
 		<authentication/>
 		<prelogin/>
