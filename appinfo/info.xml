@@ -13,6 +13,7 @@
 	<repository type="git">https://github.com/owncloud/user_external.git</repository>
 	<dependencies>
 		<owncloud min-version="11" max-version="11" />
+		<php min-version="8.3" />
 	</dependencies>
 	<version>0.7.0</version>
 	<types>
