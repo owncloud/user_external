@@ -1,4 +1,4 @@
-# agents.md — user_external
+# AGENTS.md — user_external
 
 ## Repository Overview
 
