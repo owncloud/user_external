@@ -64,9 +64,11 @@ abstract class Base extends \OC_User_Backend {
 		$user = $result->fetchOne();
 		$result->free();
 
-		$displayName = \trim($user['displayname'], ' ');
-		if (!empty($displayName)) {
-			return $displayName;
+		if ($user !== false) {
+			$displayName = \trim((string)$user, ' ');
+			if (!empty($displayName)) {
+				return $displayName;
+			}
 		}
 
 		return $uid;
